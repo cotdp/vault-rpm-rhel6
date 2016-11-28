@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-VERSION=0.2.0
+VERSION=0.6.2
 ARCH=x86_64
 NAME=vault
 
@@ -18,11 +18,12 @@ case "${ARCH}" in
         ;;
 esac
 
-URL="https://dl.bintray.com/mitchellh/${NAME}/${ZIP}"
+# URL="https://dl.bintray.com/mitchellh/${NAME}/${ZIP}"
+URL="https://releases.hashicorp.com/vault/${VERSION}/${ZIP}"
 echo $"Creating ${NAME} ${ARCH} RPM build file version ${VERSION}"
 
 # fetching vault
-curl -k -L -o $ZIP $URL || {
+curl -L -o $ZIP $URL || {
     echo $"URL or version not found!" >&2
     exit 1
 }
@@ -31,10 +32,10 @@ curl -k -L -o $ZIP $URL || {
 rm -rf target/*
 
 # create target structure
-mkdir -p target/usr/local/bin/
+mkdir -p target/usr/bin/
 
 # unzip
-unzip -qq ${ZIP} -d target/usr/local/bin/
+unzip -qq ${ZIP} -d target/usr/bin/
 rm ${ZIP}
 
 # create rpm
@@ -45,6 +46,7 @@ fpm -s dir \
     -n vault \
     -v ${VERSION} \
     -p target \
+    --rpm-os linux \
     --rpm-ignore-iteration-in-dependencies \
     --description "Vault RPM package for RedHat Enterprise Linux 6" \
     --url "https://vaultproject.io" \
